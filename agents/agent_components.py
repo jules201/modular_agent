@@ -42,22 +42,3 @@ class ReplayBuffer:
     def __len__(self) -> int:
         return self.size
 
-class Network(nn.Module):
-    def __init__(self, in_dim: int, out_dim: int, view, hidden_dim, blind=False):
-        """Initialization."""
-        super(Network, self).__init__()
-        self.h = hidden_dim
-        self.blind = blind
-        if self.blind: self.mask = nn.Parameter(0.1 + torch.zeros(1,in_dim)) # This is the mask (it is just an array initialized with all 0.1s)
-        self.layers = nn.Sequential(
-            nn.Linear(in_dim, self.h), 
-            nn.ReLU(),
-            nn.Linear(self.h, self.h), 
-            nn.ReLU(), 
-            nn.Linear(self.h, out_dim)
-        )
-
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
-        """Forward method implementation."""
-        if self.blind: x = x * self.mask
-        return self.layers(x)
