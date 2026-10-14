@@ -9,8 +9,9 @@ from typing import List, Tuple
 import matplotlib.pyplot as plt
 
 # Import shared components
-from .agent_components import ReplayBuffer, Network
-from .arbitrators.ceo_arbitrator import arbitrator_ceo
+from .agent_components import ReplayBuffer
+from .network import Network
+from .arbitrator import arbitrator_ceo
 
 
 class Modular_DQN_Agent:
@@ -36,21 +37,21 @@ class Modular_DQN_Agent:
     def __init__(
             self,
             env,
-            memory_size: int,
-            batch_size: int,
+            memory_size: int, #how many transitions to store in memory 
+            batch_size: int, #minibatch size for training 
             target_update: int,
             epsilon_decay: float,
             max_epsilon: float = 1.0,
             min_epsilon: float = 0.1,
-            gamma: float = 0.99,
+            gamma: float = 0.99, #discount factor for future rewards
             lr: float = 0.001,
             explore=1000,
-            arbitrator_lr=1e-3,
+            arbitrator_lr=1e-3, #learning rate for the arbitrator network
             hidden_size=512,
-            decision_process='gmQ',
-            blind=False,
-            skip_unpreferred = False,
-            switch_episode=10000
+            decision_process='gmQ', #how to pick the action from the modules, options are: gmQ, allQ, variance, voting, max_abs, CEO
+            blind=False, #use attention mask (ablation study)
+            skip_unpreferred = False, #only train 'preferred' modules, i.e. those that agree with the selected action
+            switch_episode=10000 #when to switch the environment to a new state (e.g. change resource map)
     ):
         """Initialization.
 
@@ -67,7 +68,7 @@ class Modular_DQN_Agent:
         """
         # obs_dim = env.observation_space.shape[0]
 
-        self.env = env
+        self.env = env #grid environmenr
         self.n_statedims = self.env.n_statedims
         self.action_dim = self.env.n_actions
         self.numModules = env.n_stats
@@ -107,6 +108,8 @@ class Modular_DQN_Agent:
         print(self.device)
 
         # networks: dqn, dqn_target
+
+        # list of N neural networks, one for each module /need
         self.modules = [
             Network(self.channels, self.action_dim, self.env.view_size, self.hidden_size, blind=self.blind).to(
                 self.device) for i in range(self.numModules)]
@@ -114,6 +117,7 @@ class Modular_DQN_Agent:
             Network(self.channels, self.action_dim, self.env.view_size, self.hidden_size, blind=self.blind).to(
                 self.device) for i in range(self.numModules)]
         # self.arbitrator = arbitrator_ceo(obs_dim, self.numModules, self.arbitrator_lr).to(self.device)
+        #decision maker network
         self.arbitrator = arbitrator_ceo(self.numModules, self.action_dim, self.arbitrator_lr).to(self.device)
 
         for i in range(self.numModules):
@@ -138,11 +142,11 @@ class Modular_DQN_Agent:
         # modular policy
         # if frame % 7 == 0: self.current_module +=1
         # if self.current_module > self.numModules - 1: self.current_module = 0
-        m = nn.Softmax(dim=0)
+        # m = nn.Softmax(dim=0)
 
         prepared_state = torch.FloatTensor(state).to(self.device)
         ModuleQValues = [self.modules[i](prepared_state) for i in range(self.numModules)]
-        preferred_actions = [np.argmax(modqs) for modqs in ModuleQValues]
+        preferred_actions = [np.argmax(modqs.detach().cpu().numpy()) for modqs in ModuleQValues]
         # self.module_qs.append(np.array(ModuleQValues))
 
         if self.epsilon > np.random.random() and not self.is_test:

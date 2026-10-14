@@ -1,0 +1,19 @@
+============================================================
+AGENT SUMMARY
+============================================================
+
+Timestamp:        20261007_145005
+Decision Process: stat_weighted
+Num Modules:      4
+
+EVALUATION RESULTS:
+  Mean Reward:          1.2046
+  Reward Std Dev:     3.641841566575186
+  Mean Deviation:     741.3786
+  Mean Max Deviation:      5.5
+  Num Episodes:       3
+
+INDIVIDUAL EPISODE REWARDS:
+  Episode 1:  -2.7842
+  Episode 2:   0.3773
+  Episode 3:   6.0206

@@ -8,6 +8,8 @@ import torch
 import copy
 import gymnasium as gym 
 
+from .helper_functions import multivariate_gaussian, get_n_patches, get_n_resources
+
 class World():
     """Custom Environment that follows gym interface"""
     metadata = {'render.modes': ['human']}
@@ -16,24 +18,24 @@ class World():
                  size=9,
                  bounds=4,
                  modes=3,
-                 field_of_view=3,
+                 field_of_view=1,
                  stat_types=[0, 0],
                  variance=1,
                  radius=2,
                  offset=0,
                  circle=True,
-                 stationary=True,
+                 stationary=True, #set to False if you want the resource maps to change every episode
                  poisson_shuffle = False,
-                 ep_length=50,
-                 resource_percentile=50,
+                 ep_length=30000,
+                 resource_percentile=50, #95
                  rotation_speed=0.01,
                  reward_type='sq_dev',
                  module_reward_type='sq_dev',
                  stat_decrease_per_step=0.005,
                  stat_increase_multiplier=1,
                  initial_stats=[0.5, 0.9],
-                 set_point=1,
-                 pq=[2, 2],
+                 set_point=5,
+                 pq=[4, 2],
                  reward_clip=None,
                  reward_scaling=1,
                  mod_reward_scaling=1,
@@ -44,7 +46,7 @@ class World():
         self.stat_types = stat_types  # list of stat types, 0 = symmetric, starts at 0.5, auto-increase, 1 = capped, stochastic loss, rest-increase
         self.n_stats = len(self.stat_types)  # number of features (one for each stat)
         self.fov = field_of_view  # field of view of agent
-        self.view_size = 2 * self.fov + 1
+        self.view_size = 2 * self.fov + 1 #2*3+1 7?
         self.bounds = bounds  # range of means for resource patches
         self.modes = modes  # number of resource patches per stat
         self.ep_length = ep_length
@@ -111,7 +113,7 @@ class World():
         self.time_step = 0  # resets step timer
         self.dead = False
         self.done = False
-        self.new = []
+        #self.new = []
         # self.stats = copy.deepcopy(self.initial_stats) # puts stats back to initial values
         # self.loc = [np.random.randint(self.fov,self.size-self.fov),np.random.randint(self.fov,self.size-self.fov)] # initialize state randomly
         # self.loc = [2,2]

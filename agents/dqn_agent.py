@@ -1,16 +1,18 @@
-class DQN_Agent:
-    import torch
+
+import torch
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
 from torch.distributions import Categorical
 import numpy as np
 import copy
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 import matplotlib.pyplot as plt
 
+
 # Import shared components
-from .agent_components import ReplayBuffer, Network
+from .agent_components import ReplayBuffer
+from .network import Network
 
 class DQN_Agent:
     """DQN Agent interacting with environment.

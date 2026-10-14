@@ -1,3 +1,5 @@
+import numpy as np
+
 def multivariate_gaussian(grid_size = 20, bounds = 4, height = 1, m1 = None, m2 = None, Sigma = None):
     """Return the multivariate Gaussian distribution on array pos."""
 

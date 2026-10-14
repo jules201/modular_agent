@@ -14,9 +14,9 @@ class arbitrator_ceo(nn.Module):
         self.hidden_dim = 512
         self.input_dim = input_dim
         self.action_dim = action_dim
-        self.gamma = gamma  # ✅ Fixed
+        self.gamma = gamma  
         self.lr = lr
-        self.eps = 1e-20  # ✅ Fixed (was 10e-20, which is 1e-19)
+        self.eps = 1e-20  
         
         # Neural network layers
         self.fc1 = nn.Linear(self.input_dim, self.hidden_dim)
