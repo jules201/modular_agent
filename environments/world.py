@@ -31,7 +31,7 @@ class World():
                  rotation_speed=0.01,
                  reward_type='sq_dev',
                  module_reward_type='sq_dev',
-                 stat_decrease_per_step=0.005,
+                 stat_decrease_per_step=0.005, #change to 0.01 for more difficult environment
                  stat_increase_multiplier=1,
                  initial_stats=[0.5, 0.9],
                  set_point=5,

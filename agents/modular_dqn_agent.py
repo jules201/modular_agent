@@ -49,7 +49,7 @@ class Modular_DQN_Agent:
             arbitrator_lr=1e-3, #learning rate for the arbitrator network
             hidden_size=512,
             decision_process='gmQ', #how to pick the action from the modules, options are: gmQ, allQ, variance, voting, max_abs, CEO
-            blind=False, #use attention mask (ablation study)
+            blind=True, #use attention mask (ablation study)
             skip_unpreferred = False, #only train 'preferred' modules, i.e. those that agree with the selected action
             switch_episode=10000 #when to switch the environment to a new state (e.g. change resource map)
     ):
@@ -95,7 +95,7 @@ class Modular_DQN_Agent:
         self.hidden_size = hidden_size
         self.decision_process = decision_process
         self.blind = blind
-        self.lambd = 0.01
+        self.lambd = 0.0001 #changed from 0.01 to 0.0001
         self.clamp_to = 0
         self.updates_per_step = 10
         self.skip_unpreferred = skip_unpreferred
