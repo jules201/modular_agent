@@ -28,7 +28,7 @@ PLOTTING_INTERVAL = 10000       # Plot every N frames
 HIDDEN_SIZE = 512               # Hidden layer size in networks
 DECISION_PROCESS = 'gmQ'        # How to pick modules: 'gmQ', 'CEO', 'variance', 
                                 # 'voting', 'max_abs', 'allQ', 'stat_weighted'
-BLIND = False                    # Use attention mask (ablation study)
+BLIND = True                    # Use attention mask (ablation study)
 SKIP_UNPREFERRED = False        # Only train modules that wanted the action
 SWITCH_EPISODE = 1500000        # Frame to trigger environment change (usually > NUM_FRAMES)
 
@@ -48,7 +48,7 @@ VARIANCE = 1                    # Gaussian variance of resources
 CIRCLE = True                   # Use circular arrangement (True) or random (False)
 
 # Training
-STATIONARY = True              # Does world change? (False = rotates)
+STATIONARY = False              # Does world change? (False = rotates)
 POISSON_SHUFFLE = False         # Random resource reshuffling
 ROTATION_SPEED = 3.14159        # How fast world rotates (pi radians)
 EP_LENGTH = 50000                 # Steps per episode
